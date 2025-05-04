@@ -18,6 +18,9 @@ class Device {
             if (!this._adapter.features.has("subgroups")) {
                 throw new Error("Subgroups support is not available");
             }
+            if (!this._adapter.features.has("shader-f16")) {
+                throw new Error("shader-f16 support is not available");
+            }
 
             if (this._adapter) {
                 const adapterInfo = await this._adapter.info;
@@ -36,12 +39,26 @@ class Device {
                 "\nsubgroupMaxSize", this._adapter.info.subgroupMaxSize,
             );
 
+            const use_maxComputeWorkgroupSizeX = 512;
+            const use_maxComputeInvocationsPerWorkgroup = 512;
+            const use_maxComputeWorkgroupStorageSize = 20480;
+            if (use_maxComputeWorkgroupSizeX > this._adapter.limits.maxComputeWorkgroupSizeX ||
+                use_maxComputeInvocationsPerWorkgroup > this._adapter.limits.maxComputeInvocationsPerWorkgroup ||
+                use_maxComputeWorkgroupStorageSize > this._adapter.limits.maxComputeWorkgroupStorageSize
+            ) {
+                throw new Error("Require adapter limits:" + 
+                    "\nmaxComputeWorkgroupSizeX: " + use_maxComputeWorkgroupSizeX + 
+                    "\nmaxComputeInvocationsPerWorkgroup: " + use_maxComputeInvocationsPerWorkgroup + 
+                    "\nmaxComputeWorkgroupStorageSize: " + use_maxComputeWorkgroupStorageSize
+                );
+            }
+
             this._device = await this._adapter.requestDevice({
                 requiredFeatures:  ["subgroups"],
                 requiredLimits: {
-                    maxComputeWorkgroupSizeX: 512,
-                    maxComputeInvocationsPerWorkgroup: 512,
-                    maxComputeWorkgroupStorageSize: 20480,
+                    maxComputeWorkgroupSizeX: use_maxComputeWorkgroupSizeX,
+                    maxComputeInvocationsPerWorkgroup: use_maxComputeInvocationsPerWorkgroup,
+                    maxComputeWorkgroupStorageSize: use_maxComputeWorkgroupStorageSize,
                 }
             });
 
