@@ -492,7 +492,7 @@ class RadixSorter {
 
         computePass.setBindGroup(3, this._bindGroup_checker);
         computePass.setPipeline(this._checkerPipeline);
-        computePass.dispatchWorkgroups(Math.min(this._maxComputeWorkgroupsPerDimension, RadixSorter.AlignUp(elementCount, RadixSorter.WORKGROUP_SIZE)), 1, 1);
+        computePass.dispatchWorkgroups(Math.min(this._maxComputeWorkgroupsPerDimension, RadixSorter.RoundUp(elementCount, RadixSorter.WORKGROUP_SIZE)), 1, 1);
 
         computePass.end();
 
