@@ -18,9 +18,6 @@ class Device {
             if (!this._adapter.features.has("subgroups")) {
                 throw new Error("Subgroups support is not available");
             }
-            if (!this._adapter.features.has("shader-f16")) {
-                throw new Error("shader-f16 support is not available");
-            }
 
             if (this._adapter) {
                 const adapterInfo = await this._adapter.info;
